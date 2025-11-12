@@ -1,0 +1,42 @@
+---
+alwaysApply: true
+---
+## Figma MCP Integration Rules
+
+- The Figma MCP Server provides an assets endpoint which can serve image and SVG assets.
+- If the Figma MCP Server returns a localhost source for an image or an SVG, use that image or SVG source directly.
+- Do NOT import/add new icon packages; all assets should be in the Figma payload.
+- Do NOT use or create placeholders if a localhost source is provided.
+
+## Implementation Flow
+
+- Always run `get_metadata` first to get the high-level node map.
+- Always run `get_design_context` next to fetch the structured representation for the exact node(s).
+- Always run `get_code_connect_map` after `get_design_context` to map components to code references.
+- Always run `get_variable_defs` after `get_code_connect_map` to retrieve design tokens.
+- Run `get_screenshot` after collecting the structured data for a visual reference of the node variant being implemented.
+- Only after you have completed the above flow, download any assets needed and start implementation.
+- Translate the output (usually React + Tailwind) into this project's conventions, styles, and framework.
+- Reuse the project's color tokens, components, and typography wherever possible.
+- Validate against Figma for 1:1 look and behavior before marking complete.
+- After rendering, compare the component side-by-side with the Figma screenshot at each supported breakpoint (desktop, tablet, mobile) and adjust spacing, typography, and layout until they match.
+
+## Implementation Rules
+
+- Treat the Figma MCP output (React + Tailwind) as a representation of design and behavior, not as final code style.
+- Replace Tailwind utility classes with the project's preferred utilities/design-system tokens when applicable.
+- Reuse existing components (e.g., buttons, inputs, typography, icon wrappers) instead of duplicating functionality.
+- Use the project's color system, typography scale, and spacing tokens consistently.
+- Respect existing routing, state management, and data-fetch patterns already adopted in the repo.
+- Strive for pixel-perfect fidelity with the Figma design. When conflicts arise, prefer design-system tokens and adjust spacing or sizes minimally to match visuals without introducing unnecessary utility classes (e.g., avoid adding `rounded` unless specified) or custom absolute values; use the closest existing Tailwind utilities instead.
+- Preserve the Figma styling decisions exactly—do not add embellishments (extra radii, shadows, gradients, etc.) that are not explicitly shown for any breakpoint.
+- Validate the final UI against the Figma screenshot for both look and behavior.
+- Mirror any responsive behavior captured in `get_design_context`, including hidden nodes, variant swaps, and auto-layout adjustments across breakpoints.
+- After replacing Tailwind utilities with design tokens, recheck the rendered component against the Figma screenshot to confirm no spacing or typography regressions slipped in.
+
+## Tailwind Structure Guidelines
+
+- Always generate styling using Tailwind CSS classes exclusively; do not generate custom CSS or inline styles.
+- Always structure UI elements as micro-components for reusability and modularity.
+- Micro-components should be self-contained with minimal dependencies and focused on a single responsibility.
+- Complete a responsive QA pass across the project's supported breakpoints (e.g., via Storybook or local pages) before sign-off to confirm pixel-perfect behavior on mobile and desktop.

@@ -1,0 +1,53 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  padding: 0 24px;
+  background-color: rgba(0, 0, 0, 0.95);
+  border-bottom: 1px solid #27272a;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-transform: uppercase;
+  letter-spacing: -0.31px;
+}
+
+.brandIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(140deg, #7f5eff, #c27aff);
+}
+
+.brandLabel {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  font-size: 16px;
+  color: #9f9fa9;
+  letter-spacing: -0.31px;
+  transition: color 0.2s ease;
+}
+
+.navLink:hover,
+.navLink:focus-visible {
+  color: #ffffff;
+}
+
+
+

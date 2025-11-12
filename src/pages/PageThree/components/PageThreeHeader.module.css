@@ -1,0 +1,88 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.95);
+  border-bottom: 1px solid #27272a;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #f4f4f5;
+  font-size: 16px;
+  letter-spacing: -0.3px;
+  text-transform: uppercase;
+}
+
+.brandIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.brandGlyph {
+  width: 32px;
+  height: 32px;
+}
+
+.brandName {
+  font-weight: 600;
+  letter-spacing: -0.32px;
+}
+
+.navigation {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navItem {
+  display: flex;
+}
+
+.navLink {
+  font-size: 16px;
+  color: #9f9fa9;
+  transition: color 0.2s ease;
+}
+
+.navLink:hover,
+.navLink:focus-visible {
+  color: #f4f4f5;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0 24px;
+  }
+
+  .navList {
+    gap: 20px;
+  }
+
+  .navLink {
+    font-size: 14px;
+  }
+}
+
+
+
