@@ -56,21 +56,23 @@ export function PageEightStoryCard({
       </div>
 
       <div className="flex flex-1 flex-col gap-3 px-6 pb-6 pt-6 sm:gap-4">
-        <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-primary">
-          <span className="tracking-[0.2em]">{category}</span>
-          <span aria-hidden className="text-base text-border">
+        <div className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.6px] text-primary">
+          <span className="tracking-[0.6px]">{category}</span>
+          <span aria-hidden className="text-base text-zinc-600">
             •
           </span>
-          <span className="flex items-center gap-2 text-xs font-medium tracking-normal text-text-muted">
+          <span className="flex items-center gap-2 text-xs font-normal tracking-[0.2px] text-text-muted">
             <svg aria-hidden viewBox="0 0 24 24" className="size-3" fill="currentColor" focusable="false">
               <path d={clockIconPath} />
             </svg>
-            <span className="uppercase tracking-[0.05em]">{readLength}</span>
+            <span className="tracking-[0.2px]">{readLength}</span>
           </span>
         </div>
 
-        <h3 className="text-2xl font-semibold leading-tight tracking-[0.01em] text-white">{title}</h3>
-        <p className="text-base leading-6 text-text-secondary sm:text-lg sm:leading-7">{excerpt}</p>
+        <h3 className="text-[24px] font-normal leading-[32px] tracking-[0.0703px] text-white">{title}</h3>
+        <p className="text-base leading-6 tracking-[-0.02em] text-text-secondary sm:text-lg sm:leading-7">
+          {excerpt}
+        </p>
 
         <div className="mt-auto flex items-center justify-between text-sm text-text-muted">
           <span>{author}</span>
@@ -80,7 +82,7 @@ export function PageEightStoryCard({
               event.stopPropagation()
               onSelect?.()
             }}
-            className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-white"
+            className="inline-flex items-center gap-2 text-sm font-medium tracking-[-0.1504px] text-primary transition-colors hover:text-white"
           >
             {ctaLabel}
             <svg aria-hidden viewBox="0 0 20 20" className="size-4" fill="currentColor" focusable="false">

@@ -38,5 +38,6 @@ alwaysApply: true
 
 - Always generate styling using Tailwind CSS classes exclusively; do not generate custom CSS or inline styles.
 - Always structure UI elements as micro-components for reusability and modularity.
+- Prefer flexbox layouts; avoid grid unless explicitly required by the design.
 - Micro-components should be self-contained with minimal dependencies and focused on a single responsibility.
 - Complete a responsive QA pass across the project's supported breakpoints (e.g., via Storybook or local pages) before sign-off to confirm pixel-perfect behavior on mobile and desktop.
