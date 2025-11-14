@@ -5,11 +5,13 @@ import { useCurrentPath } from './hooks/useCurrentPath'
 import { DashboardPage } from './pages/Dashboard/DashboardPage'
 import { PageEight } from './pages/PageEight/PageEight'
 import { ResponsivePage } from './pages/Responsive/ResponsivePage'
+import { ResponsivePage as ResponsivePerComponent } from './pages/Responsive-Component/ResponsivePage'
 
 const routeTable: Record<string, ComponentType> = {
   '/': DashboardPage,
   '/magazine': PageEight,
   '/responsive': ResponsivePage,
+  '/responsive/component': ResponsivePerComponent
 }
 
 function App() {

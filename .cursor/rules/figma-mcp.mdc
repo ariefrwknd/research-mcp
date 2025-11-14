@@ -33,6 +33,12 @@ alwaysApply: true
 - Validate the final UI against the Figma screenshot for both look and behavior.
 - Mirror any responsive behavior captured in `get_design_context`, including hidden nodes, variant swaps, and auto-layout adjustments across breakpoints.
 - After replacing Tailwind utilities with design tokens, recheck the rendered component against the Figma screenshot to confirm no spacing or typography regressions slipped in.
+- Perform at least two focused precision passes on every implementation, verifying spacing, typography, alignment, and behavior match the design before sign-off.
+- Capture detailed context for every visual element—gradients, imagery, icons, and assets—before coding to ensure accurate reproduction.
+- Always download image and SVG assets supplied by Figma MCP, then rename them to clear, context-specific names before usage.
+- Inspect fine-grain visual details—gradients, transparency, subtle shadows, and layout spacing—to ensure pixel-level precision before completion.
+- Once the build is complete, compare the rendered UI against the Figma screenshot across all supported breakpoints to confirm a precise match before final delivery.
+- Never introduce unnecessary utility classes or custom styles that are not explicitly required to match the Figma design.
 
 ## Tailwind Structure Guidelines
 
