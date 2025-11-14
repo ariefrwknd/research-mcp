@@ -1,0 +1,188 @@
+---
+alwaysApply: true
+---
+
+# Feature Folder Structure Rules
+
+## Overview
+All features must follow a consistent folder structure that separates concerns into dedicated directories. This promotes maintainability, scalability, and clear organization.
+
+## Feature Location
+- All features must be located in `src/pages/` or `src/features/` directory
+- Each feature must have its own folder named in `PascalCase` (e.g., `Dashboard`, `PageEight`, `UserProfile`)
+
+## Required Folder Structure
+
+Each feature folder MUST contain the following structure:
+
+```
+FeatureName/
+├── FeatureName.tsx          # Main feature/page component (entry point)
+├── components/              # Feature-specific UI components
+│   ├── FeatureComponent1.tsx
+│   ├── FeatureComponent2.tsx
+│   └── ...
+├── hooks/                   # Feature-specific custom hooks
+│   ├── useFeatureHook.ts
+│   └── ...
+├── types/                   # Feature-specific TypeScript types and interfaces
+│   ├── feature.types.ts
+│   └── ...
+├── services/                # Feature-specific API calls and business logic
+│   ├── featureService.ts
+│   └── ...
+├── utils/                   # Feature-specific utility functions (optional)
+│   ├── featureUtils.ts
+│   └── ...
+├── constants/               # Feature-specific constants (optional)
+│   ├── featureConstants.ts
+│   └── ...
+└── assets/                  # Feature-specific assets (images, SVGs, etc.) (optional)
+    ├── feature-image.png
+    └── ...
+```
+
+## Directory Rules
+
+### 1. Main Feature File
+- **Location**: `FeatureName/FeatureName.tsx`
+- **Purpose**: Main entry point component for the feature
+- **Naming**: Must match the folder name in PascalCase
+- **Exports**: Must export the main feature component as a named export
+
+### 2. Components Directory
+- **Location**: `FeatureName/components/`
+- **Purpose**: All feature-specific UI components
+- **Naming**: PascalCase with feature prefix (e.g., `DashboardNavbar.tsx`, `PageEightHero.tsx`)
+- **Rules**:
+  - One component per file
+  - Components should be self-contained and reusable within the feature
+  - Shared components used across multiple features should be in `src/components/`
+
+### 3. Hooks Directory
+- **Location**: `FeatureName/hooks/`
+- **Purpose**: Feature-specific custom React hooks
+- **Naming**: Must start with `use` prefix (e.g., `useFeatureData.ts`, `useFeatureState.ts`)
+- **Rules**:
+  - One hook per file
+  - Hooks should be feature-specific
+  - Shared hooks used across multiple features should be in `src/hooks/`
+
+### 4. Types Directory
+- **Location**: `FeatureName/types/`
+- **Purpose**: TypeScript type definitions, interfaces, and enums specific to the feature
+- **Naming**: Descriptive names with `.types.ts` suffix (e.g., `feature.types.ts`, `user.types.ts`)
+- **Rules**:
+  - Group related types in the same file
+  - Export types that are used outside the feature
+  - Avoid inline type definitions in component files when types are reused
+
+### 5. Services Directory
+- **Location**: `FeatureName/services/`
+- **Purpose**: API calls, data fetching, and business logic specific to the feature
+- **Naming**: Descriptive names with `Service` suffix (e.g., `featureService.ts`, `userService.ts`)
+- **Rules**:
+  - One service per file or domain
+  - Services should handle all external API calls for the feature
+  - Shared services used across multiple features should be in `src/services/`
+
+### 6. Utils Directory (Optional)
+- **Location**: `FeatureName/utils/`
+- **Purpose**: Feature-specific utility functions and helpers
+- **Naming**: Descriptive names with `Utils` suffix (e.g., `featureUtils.ts`, `formatUtils.ts`)
+- **Rules**:
+  - Only include utilities specific to this feature
+  - Shared utilities should be in `src/utils/`
+
+### 7. Constants Directory (Optional)
+- **Location**: `FeatureName/constants/`
+- **Purpose**: Feature-specific constants, configuration values, and enums
+- **Naming**: Descriptive names with `Constants` suffix (e.g., `featureConstants.ts`)
+- **Rules**:
+  - Only include constants specific to this feature
+  - Shared constants should be in `src/constants/`
+
+### 8. Assets Directory (Optional)
+- **Location**: `FeatureName/assets/`
+- **Purpose**: Feature-specific images, SVGs, fonts, and other static assets
+- **Rules**:
+  - Use clear, descriptive names for assets
+  - Shared assets should be in `src/assets/` or `public/`
+
+## Import Rules
+
+### Internal Feature Imports
+- Import from feature subdirectories using relative paths:
+  ```typescript
+  import { FeatureComponent } from './components/FeatureComponent'
+  import { useFeatureHook } from './hooks/useFeatureHook'
+  import type { FeatureType } from './types/feature.types'
+  import { featureService } from './services/featureService'
+  ```
+
+### Cross-Feature Imports
+- Import shared resources from root-level directories:
+  ```typescript
+  import { SharedComponent } from '../../components/SharedComponent'
+  import { useSharedHook } from '../../hooks/useSharedHook'
+  import { sharedService } from '../../services/sharedService'
+  ```
+
+### Type Imports
+- Always use `import type` for type-only imports:
+  ```typescript
+  import type { FeatureType } from './types/feature.types'
+  ```
+
+## File Naming Conventions
+
+- **Components**: PascalCase (e.g., `DashboardNavbar.tsx`)
+- **Hooks**: camelCase with `use` prefix (e.g., `useFeatureData.ts`)
+- **Types**: camelCase with `.types.ts` suffix (e.g., `feature.types.ts`)
+- **Services**: camelCase with `Service` suffix (e.g., `featureService.ts`)
+- **Utils**: camelCase with `Utils` suffix (e.g., `featureUtils.ts`)
+- **Constants**: camelCase with `Constants` suffix (e.g., `featureConstants.ts`)
+
+## Migration Guidelines
+
+When refactoring existing features:
+1. Create the new folder structure
+2. Move components to `components/` directory
+3. Extract types to `types/` directory
+4. Move feature-specific hooks to `hooks/` directory
+5. Move feature-specific services to `services/` directory
+6. Update all import paths
+7. Ensure no shared resources are moved (keep them in root-level directories)
+
+## Examples
+
+### Good Structure
+```
+src/pages/Dashboard/
+├── DashboardPage.tsx
+├── components/
+│   ├── DashboardNavbar.tsx
+│   ├── DashboardSummarySection.tsx
+│   └── DashboardPerformanceCharts.tsx
+├── hooks/
+│   └── useDashboardData.ts
+├── types/
+│   └── dashboard.types.ts
+└── services/
+    └── dashboardService.ts
+```
+
+### Bad Structure (Avoid)
+```
+src/pages/Dashboard/
+├── DashboardPage.tsx
+├── DashboardNavbar.tsx          # ❌ Component not in components/
+├── dashboardTypes.ts            # ❌ Types not in types/
+└── dashboardService.ts          # ❌ Service not in services/
+```
+
+## Enforcement
+
+- Cursor will suggest folder structure corrections when creating new features
+- When adding new files to a feature, ensure they are placed in the correct subdirectory
+- Refactor existing features to match this structure when making significant changes
