@@ -189,7 +189,7 @@ function SrcStatsCard() {
   }
 
   return (
-    <StatsCardContainer className="relative overflow-hidden bg-[#1e1e1e] text-white">
+    <StatsCardContainer className="relative overflow-hidden !bg-[#1e1e1e] text-white">
       <div className="pointer-events-none absolute -left-32 bottom-[-120px] h-72 w-72 rounded-full bg-[radial-gradient(circle,_rgba(255,157,0,0.6)_0%,_rgba(255,157,0,0.15)_40%,_transparent_70%)]" />
       <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.08)_0%,_transparent_70%)]" />
       <CardHeader
