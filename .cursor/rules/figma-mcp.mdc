@@ -21,6 +21,50 @@ alwaysApply: true
 - Validate against Figma for 1:1 look and behavior before marking complete.
 - After rendering, compare the component side-by-side with the Figma screenshot at each supported breakpoint (desktop, tablet, mobile) and adjust spacing, typography, and layout until they match.
 
+## Component Connection and Prototype Verification
+
+### Connection Verification Workflow
+
+Before implementing or modifying any component connected to Figma, **always** follow this mandatory verification sequence:
+
+1. **Run `get_code_connect_map` first** to check if a connection already exists
+   - Verify if the node has an existing code connection mapping
+   - Check the `codeConnectSrc` and `codeConnectName` to identify the connected component
+   - If a connection exists, review the current implementation before making changes
+
+2. **Run `get_design_context`** to verify design specifications match
+   - Compare the Figma design specifications with the existing code implementation
+   - Verify that visual properties (colors, spacing, typography, layout) align with the design
+   - Check for any design updates or changes that need to be reflected in code
+   - Ensure all design tokens and variables are correctly applied
+
+3. **Verify prototype interactions match code implementation**
+   - Review prototype connections and interactions defined in Figma
+   - Check if the code implementation handles all prototype interactions (clicks, hovers, navigation, state changes)
+   - Verify that interactive behaviors (transitions, animations, state management) match the prototype
+   - Ensure all user flows and interactions from the prototype are correctly implemented
+
+### Creating Component Connections
+
+When creating a new component connection:
+
+- Use `get_code_connect_map` to check if a connection should be created or if one already exists
+- Ensure the component file path and name match the Figma component structure
+- Verify the component implementation matches the design specifications from `get_design_context`
+- Test all prototype interactions to ensure they work as designed
+- Document the connection mapping for future reference
+
+### Prototype Interaction Verification Checklist
+
+When verifying prototype interactions, ensure:
+
+- **Click interactions**: All clickable elements trigger the correct actions
+- **Hover states**: Hover effects match the prototype behavior
+- **Navigation flows**: Page transitions and routing match prototype connections
+- **State changes**: Component state updates align with prototype interactions
+- **Animations**: Transitions and animations match prototype timing and behavior
+- **Responsive behavior**: Interactive elements work correctly across all breakpoints
+
 ## Implementation Rules
 
 - Treat the Figma MCP output (React + Tailwind) as a representation of design and behavior, not as final code style.

@@ -8,6 +8,7 @@ import { DashboardResponsive } from './pages/DashboardResponsive/DashboardRespon
 import { DashboardResponsiveComponent } from './pages/DashboardResponsiveComponent/DashboardResponsiveComponent'
 import { OneuxImage } from './pages/OneuxImage/OneuxImage'
 import { OneuxUnresponsive } from './pages/OneuxUnresponsive/OneuxUnresponsive'
+import { DetailEvent } from './pages/DetailEvent/DetailEvent'
 
 const routeTable: Record<string, ComponentType> = {
   '/magazine': PageEight,
@@ -15,7 +16,8 @@ const routeTable: Record<string, ComponentType> = {
   '/dashboard/responsive': DashboardResponsive,
   '/dashboard/responsive/component': DashboardResponsiveComponent,
   '/oneux/image': OneuxImage,
-  '/oneux/unresponsive': OneuxUnresponsive
+  '/oneux/unresponsive': OneuxUnresponsive,
+  '/oneux/detail-event': DetailEvent
 }
 
 function App() {
