@@ -6,12 +6,14 @@ import { Dashboard } from './pages/Dashboard/Dashboard'
 import { PageEight } from './pages/PageEight/PageEight'
 import { DashboardResponsive } from './pages/DashboardResponsive/DashboardResponsive'
 import { DashboardResponsiveComponent } from './pages/DashboardResponsiveComponent/DashboardResponsiveComponent'
+import { OneuxImage } from './pages/OneuxImage/OneuxImage'
 
 const routeTable: Record<string, ComponentType> = {
   '/magazine': PageEight,
   '/dashboard': Dashboard,
   '/dashboard/responsive': DashboardResponsive,
-  '/dashboard/responsive/component': DashboardResponsiveComponent
+  '/dashboard/responsive/component': DashboardResponsiveComponent,
+  '/oneux/image': OneuxImage
 }
 
 function App() {
