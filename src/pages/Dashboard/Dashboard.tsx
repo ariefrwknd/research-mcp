@@ -17,7 +17,7 @@ const navigationLinks = [
   { href: '/dashboard/administration', label: 'Administration' },
 ]
 
-export function DashboardPage() {
+export function Dashboard() {
   return (
     <div className="min-h-screen bg-zinc-100 text-zinc-900">
       <DashboardNavbar

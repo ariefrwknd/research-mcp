@@ -2,7 +2,7 @@ import { ResponsiveNavbar } from './components/ResponsiveNavbar'
 import { ResponsiveSummarySection } from './components/ResponsiveSummarySection'
 import { ResponsiveStatsSection } from './components/ResponsiveStatsSection'
 
-export function ResponsivePage() {
+export function DashboardResponsive() {
   return (
     <div className="flex min-h-screen flex-col bg-[#f3f3f3] text-neutral-900">
       <ResponsiveNavbar />
