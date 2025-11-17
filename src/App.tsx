@@ -9,6 +9,7 @@ import { DashboardResponsiveComponent } from './pages/DashboardResponsiveCompone
 import { OneuxImage } from './pages/OneuxImage/OneuxImage'
 import { OneuxUnresponsive } from './pages/OneuxUnresponsive/OneuxUnresponsive'
 import { DetailEvent } from './pages/DetailEvent/DetailEvent'
+import { AMildMissions } from './pages/AMildMissions/AMildMissions'
 
 const routeTable: Record<string, ComponentType> = {
   '/magazine': PageEight,
@@ -17,7 +18,8 @@ const routeTable: Record<string, ComponentType> = {
   '/dashboard/responsive/component': DashboardResponsiveComponent,
   '/oneux/image': OneuxImage,
   '/oneux/unresponsive': OneuxUnresponsive,
-  '/oneux/detail-event': DetailEvent
+  '/oneux/detail-event': DetailEvent,
+  '/a-mild/missions/single-prompt': AMildMissions,
 }
 
 function App() {
