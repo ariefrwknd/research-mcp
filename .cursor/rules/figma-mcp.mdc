@@ -1,93 +1,503 @@
 ---
 alwaysApply: true
 ---
-## Figma MCP Integration Rules
+# Figma MCP Integration Rules (Optimized)
 
-- The Figma MCP Server provides an assets endpoint which can serve image and SVG assets.
-- If the Figma MCP Server returns a localhost source for an image or an SVG, use that image or SVG source directly.
-- Do NOT import/add new icon packages; all assets should be in the Figma payload.
-- Do NOT use or create placeholders if a localhost source is provided.
+## 0. Goals & Principles
 
-## Implementation Flow
+- Use **Figma MCP + AI** to deliver:
+  - Pixel-perfect implementation
+  - Consistent token usage
+  - Predictable, repeatable workflows
+- The **source of truth** is always:
+  1. Figma file (design decisions)
+  2. Figma MCP responses (structured context)
+  3. Existing project conventions (codebase rules)
+- The MCP server is not a “code generator”; it is a **design API** that feeds your AI/code workflow.
 
-- Always run `get_metadata` first to get the high-level node map.
-- Always run `get_design_context` next to fetch the structured representation for the exact node(s).
-- Always run `get_code_connect_map` after `get_design_context` to map components to code references.
-- Always run `get_variable_defs` after `get_code_connect_map` to retrieve design tokens.
-- Run `get_screenshot` after collecting the structured data for a visual reference of the node variant being implemented.
-- Only after you have completed the above flow, download any assets needed and start implementation.
-- Translate the output (usually React + Tailwind) into this project's conventions, styles, and framework.
-- Reuse the project's color tokens, components, and typography wherever possible.
-- Validate against Figma for 1:1 look and behavior before marking complete.
-- After rendering, compare the component side-by-side with the Figma screenshot at each supported breakpoint (desktop, tablet, mobile) and adjust spacing, typography, and layout until they match.
+---
 
-## Component Connection and Prototype Verification
+## 1. Context & Session Management
 
-### Connection Verification Workflow
+If design/context is too large to fit in a single context window:
 
-Before implementing or modifying any component connected to Figma, **always** follow this mandatory verification sequence:
+- **Split the work** into multiple sessions or scoped tasks:
+  - By **page** (e.g., “Marketing / Landing Page”).
+  - By **section** (e.g., “Hero”, “Pricing”, “Footer”).
+  - By **component group** (e.g., “Buttons”, “Cards”, “Modals”).
+- In each session:
+  - Focus only on the relevant subset of nodes/components.
+  - Reuse and respect global decisions (colors, typography, spacing, patterns).
+- **Carry over key decisions** between sessions:
+  - Design tokens → theme / Tailwind mapping
+  - Component naming conventions
+  - Layout patterns (e.g., standard section padding, grid gutters)
+- Avoid duplicating large payloads (full Figma JSON) in prompts:
+  - Reference **file key** + **node IDs** + MCP responses instead.
+- Prefer **incremental refinement**:
+  1. Pass 1 – structure & layout
+  2. Pass 2 – typography, spacing, tokens
+  3. Pass 3 – interactions, responsive behavior
+  4. Pass 4 – code cleanup, types, API mocks, QA
 
-1. **Run `get_code_connect_map` first** to check if a connection already exists
-   - Verify if the node has an existing code connection mapping
-   - Check the `codeConnectSrc` and `codeConnectName` to identify the connected component
-   - If a connection exists, review the current implementation before making changes
+---
 
-2. **Run `get_design_context`** to verify design specifications match
-   - Compare the Figma design specifications with the existing code implementation
-   - Verify that visual properties (colors, spacing, typography, layout) align with the design
-   - Check for any design updates or changes that need to be reflected in code
-   - Ensure all design tokens and variables are correctly applied
+## 2. Figma MCP Tool Execution Requirements
 
-3. **Verify prototype interactions match code implementation**
-   - Review prototype connections and interactions defined in Figma
-   - Check if the code implementation handles all prototype interactions (clicks, hovers, navigation, state changes)
-   - Verify that interactive behaviors (transitions, animations, state management) match the prototype
-   - Ensure all user flows and interactions from the prototype are correctly implemented
+> **Mandatory:** Run the full tool chain once per implementation cycle (per page / per component group), in this exact order.
 
-### Creating Component Connections
+### 2.1 Standard Tool Flow (Always Run in This Order)
 
-When creating a new component connection:
+1. `get_metadata` – high-level file & node map (pages, frames, key components)
+2. `get_design_context` – structured design representation for target node(s)
+3. `get_code_connect_map` – mapping between Figma nodes and code components
+4. `get_variable_defs` – design tokens (colors, typography, spacing, etc.)
+5. `get_screenshot` – visual reference (for pixel-perfect comparison)
+6. Asset tools:
+   - `get_assets` / `get_image` / `get_svg` **only after** the above are done and only when needed.
 
-- Use `get_code_connect_map` to check if a connection should be created or if one already exists
-- Ensure the component file path and name match the Figma component structure
-- Verify the component implementation matches the design specifications from `get_design_context`
-- Test all prototype interactions to ensure they work as designed
-- Document the connection mapping for future reference
+> Only after completing the above flow, start coding or modifying the implementation.
 
-### Prototype Interaction Verification Checklist
+### 2.2 When to Re-Run Tools
 
-When verifying prototype interactions, ensure:
+- Re-run `get_design_context` and `get_screenshot` when:
+  - The designer updates layout, spacing, or variants.
+- Re-run `get_variable_defs` when:
+  - Tokens change (colors/typography/spacing/semantic tokens).
+- Re-run `get_code_connect_map` when:
+  - New components are connected or mappings change.
+- Re-run `get_metadata` when:
+  - Pages/nodes are added/renamed/removed significantly.
 
-- **Click interactions**: All clickable elements trigger the correct actions
-- **Hover states**: Hover effects match the prototype behavior
-- **Navigation flows**: Page transitions and routing match prototype connections
-- **State changes**: Component state updates align with prototype interactions
-- **Animations**: Transitions and animations match prototype timing and behavior
-- **Responsive behavior**: Interactive elements work correctly across all breakpoints
+---
 
-## Implementation Rules
+## 3. Per-Tool Usage Guidelines
 
-- Treat the Figma MCP output (React + Tailwind) as a representation of design and behavior, not as final code style.
-- Replace Tailwind utility classes with the project's preferred utilities/design-system tokens when applicable.
-- Reuse existing components (e.g., buttons, inputs, typography, icon wrappers) instead of duplicating functionality.
-- Use the project's color system, typography scale, and spacing tokens consistently.
-- Respect existing routing, state management, and data-fetch patterns already adopted in the repo.
-- Strive for pixel-perfect fidelity with the Figma design. When conflicts arise, prefer design-system tokens and adjust spacing or sizes minimally to match visuals without introducing unnecessary utility classes (e.g., avoid adding `rounded` unless specified) or custom absolute values; use the closest existing Tailwind utilities instead.
-- Preserve the Figma styling decisions exactly—do not add embellishments (extra radii, shadows, gradients, etc.) that are not explicitly shown for any breakpoint.
-- Validate the final UI against the Figma screenshot for both look and behavior.
-- Mirror any responsive behavior captured in `get_design_context`, including hidden nodes, variant swaps, and auto-layout adjustments across breakpoints.
-- After replacing Tailwind utilities with design tokens, recheck the rendered component against the Figma screenshot to confirm no spacing or typography regressions slipped in.
-- Perform at least two focused precision passes on every implementation, verifying spacing, typography, alignment, and behavior match the design before sign-off.
-- Capture detailed context for every visual element—gradients, imagery, icons, and assets—before coding to ensure accurate reproduction.
-- Always download image and SVG assets supplied by Figma MCP, then rename them to clear, context-specific names before usage.
-- Inspect fine-grain visual details—gradients, transparency, subtle shadows, and layout spacing—to ensure pixel-level precision before completion.
-- Once the build is complete, compare the rendered UI against the Figma screenshot across all supported breakpoints to confirm a precise match before final delivery.
-- Never introduce unnecessary utility classes or custom styles that are not explicitly required to match the Figma design.
+### 3.1 `get_metadata`
 
-## Tailwind Structure Guidelines
+- Use to:
+  - Discover pages, root frames, main components.
+  - Identify **entry nodes** (home page, dashboards, etc.).
+- Never code before you:
+  - Confirm you are targeting the correct frame / variant.
+  - Note key node IDs you will reference later.
 
-- Always generate styling using Tailwind CSS classes exclusively; do not generate custom CSS or inline styles.
-- Always structure UI elements as micro-components for reusability and modularity.
-- Prefer flexbox layouts; avoid grid unless explicitly required by the design.
-- Micro-components should be self-contained with minimal dependencies and focused on a single responsibility.
-- Complete a responsive QA pass across the project's supported breakpoints (e.g., via Storybook or local pages) before sign-off to confirm pixel-perfect behavior on mobile and desktop.
+### 3.2 `get_design_context`
+
+- Use for:
+  - Exact layout structure (auto-layout, stacks, grids).
+  - Node hierarchy (sections → groups → components).
+  - Constraints, resizing rules, visibility (hidden nodes, variants).
+- Treat it as the **blueprint**:
+  - Section ordering
+  - Padding/margin/spacing
+  - Breakpoint behavior (desktop/tablet/mobile frames)
+
+### 3.3 `get_code_connect_map`
+
+- Use to:
+  - Map Figma components ↔ existing code components.
+  - Avoid re-building components that already exist.
+- If a node is already mapped:
+  - Prefer reusing / composing existing code.
+- When creating **new** mappings:
+  - Follow project folder & naming conventions.
+  - Document: component name, file path, Figma node ID.
+
+### 3.4 `get_variable_defs`
+
+- Use to:
+  - Map Figma tokens → codebase tokens / Tailwind config.
+  - Identify semantic tokens (e.g., `color.primary`, `spacing.lg`).
+- Always:
+  - Prefer semantic tokens over raw hex values.
+  - Update Tailwind config (or theme mapping) instead of hardcoding.
+
+### 3.5 `get_screenshot`
+
+- Use for:
+  - Visual pixel-perfect checks after implementation.
+  - Comparing spacing, alignment, and typography.
+- Take:
+  - At least one screenshot per breakpoint (if provided in Figma).
+
+---
+
+## 4. Asset Handling
+
+- Use **localhost asset sources** (from MCP) directly when provided.
+- Do **not** import or add new icon packages.
+  - All icons and illustrations must come from Figma MCP payloads.
+- Do **not** create placeholder assets if:
+  - A real asset exists in the design and can be fetched via MCP.
+
+### 4.1 Asset Download & Folder Structure
+
+- Download assets into a **structured folder** based on feature:
+  - Example:
+    - `src/assets/home/hero-illustration.png`
+    - `src/assets/account/avatar-default.svg`
+- Rename assets clearly:
+  - `feature-section-element-state.ext`
+  - Example: `booking-summary-card-bg.svg`
+
+---
+
+## 5. Component Connection & Prototype Verification
+
+### 5.1 Existing Components
+
+1. Run `get_code_connect_map`.
+2. Run `get_design_context` for the specific node.
+3. Verify prototype interactions:
+   - Clicks
+   - Hovers / focus states
+   - Navigation flows (page/section transitions)
+   - Animations (if any)
+   - Responsive states/variants
+
+### 5.2 Creating New Component Connections
+
+- Before mapping:
+  - Ensure there is no conflicting mapping for the same Figma node.
+- When mapping:
+  - Follow project conventions for:
+    - Folder structure (e.g., `features/<feature>/components/`)
+    - File names (PascalCase for components)
+    - Barrel exports (if used)
+- After mapping:
+  - Validate design fidelity (visually & via `get_design_context`).
+  - Document in the mapping:
+    - Component name
+    - File path
+    - Node ID
+    - Any important variant properties (e.g., `size="lg"`, `variant="primary"`)
+
+### 5.3 Prototype Interaction Checklist
+
+Before sign-off, check:
+
+- Click interactions:
+  - Buttons, links, CTAs
+- Hover & focus states:
+  - Visual feedback for interactive elements
+- Navigation flows:
+  - Correct routing / links for each CTA
+- State changes:
+  - Tabs, accordions, filters, toggles
+- Animation matching (if defined):
+  - Duration
+  - Easing
+  - Direction
+- Responsive correctness:
+  - Layout switch at breakpoints matches Figma frames.
+
+---
+
+## 6. Implementation Rules
+
+> Figma MCP output is a **reference**, not final code. Always adapt to the project’s conventions.
+
+- Translate Figma → code using:
+  - Framework patterns (React, Next.js, etc.)
+  - Design tokens (theme or Tailwind config)
+  - Existing component library (internal or external)
+- Always:
+  - Reuse existing components where possible (buttons, inputs, layout shells).
+  - Respect existing routing, state management, and API patterns.
+
+### 6.1 Tech Stack Assumptions
+
+- **Language**: TypeScript
+- **UI**: React (function components)
+- **Styling**: Tailwind CSS only (no extra CSS files unless explicitly required)
+- **Data**: API-driven, with **mocked** or **simulated** fetches for UI states.
+
+---
+
+## 7. Typing & Component Structure
+
+### 7.1 General Rules
+
+- All components must have:
+  - Typed props (`type` or `interface`).
+  - Strongly typed internal state where relevant.
+- Prefer:
+  - `type ComponentProps = { ... }` for component props.
+  - `type ApiModel = { ... }` for API models.
+- Keep components **single-responsibility**:
+  - **Micro-components**: Button, Badge, Avatar, Icon, Tag, etc.
+  - **Composite components**: Card, List item, Navbar, Modal.
+  - **Page sections**: Hero, Stats, Testimonials, Footer.
+
+### 7.2 Example Typed Component
+
+```tsx
+type StatCardProps = {
+  label: string;
+  value: string;
+  trend?: "up" | "down" | "neutral";
+};
+
+export function StatCard({ label, value, trend = "neutral" }: StatCardProps) {
+  return (
+    <div className="flex flex-col gap-1 rounded-xl border border-neutral-200 bg-white p-4">
+      <span className="text-xs font-medium text-neutral-500">{label}</span>
+      <div className="flex items-baseline gap-2">
+        <span className="text-2xl font-semibold text-neutral-900">{value}</span>
+        {trend !== "neutral" && (
+          <span
+            className={
+              trend === "up"
+                ? "text-xs font-medium text-emerald-600"
+                : "text-xs font-medium text-rose-600"
+            }
+          >
+            {trend === "up" ? "▲" : "▼"}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## 8. Simulated API Fetching & Data Flow
+
+Whenever data is dynamic in real usage, you **must** simulate an API fetch in implementation (for dev / storybook / playground):
+
+### 8.1 Required States
+
+Every data-driven screen/component should handle:
+
+- `idle` / initial
+- `loading`
+- `success` (with data)
+- `empty` (no data)
+- `error` (failed request)
+
+### 8.2 Hook Pattern
+
+Use a dedicated hook per feature or screen:
+
+```tsx
+export type Booking = {
+  id: string;
+  guestName: string;
+  checkIn: string;
+  checkOut: string;
+  status: "upcoming" | "in_house" | "completed" | "cancelled";
+};
+
+type UseBookingsResult = {
+  data: Booking[] | null;
+  isLoading: boolean;
+  isError: boolean;
+  isEmpty: boolean;
+};
+
+export function useMockBookings(): UseBookingsResult {
+  // Future: replace with real API integration
+  const data: Booking[] = [
+    {
+      id: "BK-001",
+      guestName: "Jane Doe",
+      checkIn: "2025-11-20",
+      checkOut: "2025-11-23",
+      status: "upcoming",
+    },
+    {
+      id: "BK-002",
+      guestName: "John Smith",
+      checkIn: "2025-11-18",
+      checkOut: "2025-11-19",
+      status: "completed",
+    },
+  ];
+
+  const isLoading = false;
+  const isError = false;
+  const isEmpty = data.length === 0;
+
+  return { data, isLoading, isError, isEmpty };
+}
+```
+
+### 8.3 UI Handling Example
+
+```tsx
+export function BookingListSection() {
+  const { data, isLoading, isError, isEmpty } = useMockBookings();
+
+  if (isLoading) {
+    return <div className="p-4 text-sm text-neutral-500">Loading bookings…</div>;
+  }
+
+  if (isError) {
+    return (
+      <div className="p-4 text-sm text-rose-600">
+        Failed to load bookings. Please try again.
+      </div>
+    );
+  }
+
+  if (isEmpty || !data) {
+    return (
+      <div className="p-4 text-sm text-neutral-500">
+        No bookings yet. They will appear here once created.
+      </div>
+    );
+  }
+
+  return (
+    <ul className="divide-y divide-neutral-200">
+      {data.map((booking) => (
+        <li key={booking.id} className="flex items-center justify-between px-4 py-3">
+          <div className="flex flex-col">
+            <span className="text-sm font-medium text-neutral-900">
+              {booking.guestName}
+            </span>
+            <span className="text-xs text-neutral-500">
+              {booking.checkIn} – {booking.checkOut}
+            </span>
+          </div>
+          <span className="text-xs font-medium uppercase text-neutral-600">
+            {booking.status}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+> For each major screen defined in Figma, ensure **all required visual states** (loading/empty/error) are represented and match the design.
+
+---
+
+## 9. Visual & Behavioral Fidelity
+
+### 9.1 Pixel-Perfect Rules
+
+- Compare implementation against `get_screenshot` at 100% zoom.
+- Check:
+  - Alignment: edges, baselines, grid alignment.
+  - Spacing: section padding, gaps, margins between elements.
+  - Typography: font family, weight, size, line-height, letter-spacing.
+  - Color: use tokens, not ad-hoc values.
+
+### 9.2 Tailwind Mapping
+
+- Only use Tailwind utility classes; avoid inline styles except for dynamic values that cannot be tokenized.
+- Prefer:
+  - `px-6 py-10` (or mapped via `theme.spacing`) matched from Figma spacing.
+  - `text-sm`, `text-base`, `text-lg`, etc., mapped from font sizes in Figma.
+- Use:
+  - `flex` for majority of layouts.
+  - `grid` only when explicitly required by design (e.g., multi-column layouts).
+
+---
+
+## 10. Responsive & Behavior Rules
+
+- Use `get_design_context` to understand:
+  - Which nodes are visible/hidden at each breakpoint.
+  - Variant swaps (e.g., desktop menu vs mobile drawer).
+- Implementation should:
+  - Mirror Figma breakpoints (or map to project’s breakpoints).
+  - Use Tailwind responsive prefixes: `sm:`, `md:`, `lg:`, `xl:`.
+- Behavior:
+  - Respect auto-layout directions and gaps.
+  - Respect min/max width constraints where relevant.
+  - Ensure content is scrollable where Figma indicates scroll frames.
+
+---
+
+## 11. AI Usage & Prompting Pattern (Figma MCP + AI Agent)
+
+When using an AI agent (e.g., ChatGPT/Cursor) with Figma MCP:
+
+1. **Step 1 – Scoping Prompt**
+   - Clearly state:
+     - Target page/section/component.
+     - Tech stack (React + TS + Tailwind).
+     - Goal (implement or refactor).
+
+2. **Step 2 – Force Tool Flow**
+   - Instruct the agent to:
+     1. Call `get_metadata`.
+     2. Call `get_design_context` for target node(s).
+     3. Call `get_code_connect_map`.
+     4. Call `get_variable_defs`.
+     5. Call `get_screenshot`.
+   - Only after tool calls, start generating or modifying code.
+
+3. **Step 3 – Implementation Prompt**
+   - Ask the AI to:
+     - Generate typed React components.
+     - Use Tailwind following token mapping.
+     - Create mock hooks for data fetching.
+     - Include loading/empty/error states.
+
+4. **Step 4 – QA Prompt**
+   - Ask the AI to:
+     - Compare the implementation against `get_design_context` + `get_screenshot`.
+     - List mismatches for:
+       - Spacing
+       - Typography
+       - Colors/tokens
+       - Interaction behaviors
+     - Suggest or apply fixes.
+
+---
+
+## 12. Tailwind Structure Guidelines
+
+- Tailwind-only styling (no new global CSS unless explicitly required).
+- Prefer:
+  - `flex`, `flex-col`, `gap-*`
+  - `grid` only when design calls for multi-column layouts that are hard with flex.
+- Build as **micro-components** and compose up:
+  - Example structure:
+    - `features/<feature>/components/`
+    - `features/<feature>/pages/`
+    - `components/ui/` for reusable primitives.
+
+---
+
+## 13. Final Verification Checklist
+
+Before marking a component or page as **complete**:
+
+1. **MCP Tools**
+   - [ ] `get_metadata` has been run.
+   - [ ] `get_design_context` has been run for all relevant nodes.
+   - [ ] `get_code_connect_map` has been checked.
+   - [ ] `get_variable_defs` has been used for token mapping.
+   - [ ] `get_screenshot` has been used for pixel-perfect comparison.
+
+2. **Assets**
+   - [ ] All icons/images are from Figma MCP assets.
+   - [ ] No extra icon packages were added.
+   - [ ] Assets are stored in a structured feature-based folder.
+
+3. **Component Quality**
+   - [ ] Props are fully typed with TypeScript.
+   - [ ] Data is sourced from a simulated API hook where applicable.
+   - [ ] Loading/empty/error states match Figma or are clearly defined.
+   - [ ] Tailwind classes follow token mapping and project conventions.
+
+4. **Visual Fidelity**
+   - [ ] Layout matches Figma at all breakpoints.
+   - [ ] Spacing and typography match (within reasonable pixel tolerance).
+   - [ ] Interaction states (hover/focus/active) are implemented.
+
+5. **Session & Context**
+   - [ ] Large designs were broken into logical sessions (pages/sections/components).
+   - [ ] Key decisions (tokens, naming, patterns) are consistent across sessions.
+
+---
+
+_This document is the baseline contract for Figma MCP usage + AI-assisted implementation. Any deviation (skipping tools, partial states, ad-hoc tokens) must be explicitly justified and documented._

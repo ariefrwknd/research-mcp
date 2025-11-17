@@ -10,6 +10,7 @@ import { OneuxImage } from './pages/OneuxImage/OneuxImage'
 import { OneuxUnresponsive } from './pages/OneuxUnresponsive/OneuxUnresponsive'
 import { DetailEvent } from './pages/DetailEvent/DetailEvent'
 import { AMildMissions } from './pages/AMildMissions/AMildMissions'
+import { AMildMissionsComponents } from './pages/AMildMissionsComponents/AMildMissionsComponents'
 
 const routeTable: Record<string, ComponentType> = {
   '/magazine': PageEight,
@@ -20,6 +21,7 @@ const routeTable: Record<string, ComponentType> = {
   '/oneux/unresponsive': OneuxUnresponsive,
   '/oneux/detail-event': DetailEvent,
   '/a-mild/missions/single-prompt': AMildMissions,
+  '/a-mild/missions/components': AMildMissionsComponents,
 }
 
 function App() {
