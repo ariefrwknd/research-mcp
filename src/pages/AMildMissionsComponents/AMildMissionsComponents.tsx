@@ -1,4 +1,5 @@
 import { Campaigns } from './components/Campaigns'
+import { FloatingButton } from './components/FloatingButton'
 import { Footer } from './components/Footer'
 import { Header } from './components/Header'
 import { Hero } from './components/Hero'
@@ -22,6 +23,7 @@ export function AMildMissionsComponents() {
         </div>
       </main>
       <Footer />
+      <FloatingButton />
     </div>
   )
 }
